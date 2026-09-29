@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -9,11 +10,25 @@ from fastapi.staticfiles import StaticFiles
 from app.api import analysis, cv, health, job, skills
 from app.config import get_settings
 from app.errors import register_error_handlers
+from app.services import semantic_service
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)  # quiet model-download request logs
 
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Optional: load the embedding model at startup instead of on the first
+    # analysis (used in the Hugging Face Spaces Docker image). If loading
+    # fails, get_model() logs it and the app still starts; semantic similarity
+    # then reports itself as unavailable.
+    settings = get_settings()
+    if settings.semantic_enabled and settings.preload_embedding_model:
+        semantic_service.get_model()
+    yield
+
 
 app = FastAPI(
     title="AI Job Hunter",
@@ -22,6 +37,7 @@ app = FastAPI(
         "A decision-support tool, not an automated hiring system."
     ),
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # The frontend is served by this same app, so CORS is only needed if you open
