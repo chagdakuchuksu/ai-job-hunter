@@ -1,0 +1,11 @@
+# Web framework
+fastapi>=0.115
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9   # file uploads (multipart/form-data)
+python-dotenv>=1.0        # load settings from .env
+
+# CV processing
+pymupdf>=1.24             # PDF text extraction
+
+# Semantic similarity (pulls in PyTorch, CPU build is fine)
+sentence-transformers>=3.0

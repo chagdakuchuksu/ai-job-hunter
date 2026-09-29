@@ -1,0 +1,24 @@
+Software Engineer, Cloud & Distributed Systems
+
+About the team
+We run the platform that processes billions of events per day for our customers. You will
+work with our infrastructure and go-to-market teams and present results to C-level stakeholders.
+Good communication skills are a must, and we are going to grow the team quickly.
+
+What you will do
+- Design, build and operate distributed systems and microservices written in Go (Golang) and Java (Spring Boot)
+- Run workloads on AWS and GCP using Kubernetes (k8s), Docker and Terraform
+- Build event-driven pipelines with Apache Kafka; cache hot data in Redis
+- Store data in PostgreSQL, DynamoDB and other NoSQL databases
+- Expose internal APIs with gRPC and GraphQL
+- Own CI/CD pipelines in GitHub Actions and Jenkins
+- Improve observability with Prometheus and Grafana dashboards
+
+Requirements
+- Strong programming skills in Go, Java or C++
+- Solid understanding of data structures, algorithms and Linux
+- Experience with automated unit testing and code reviews on GitHub
+
+Nice to have
+- Python scripting for tooling
+- Some frontend exposure (TypeScript, React, Node.js) for internal dashboards

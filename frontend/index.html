@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Job Hunter</title>
+  <meta name="description" content="Compare your CV with a job description: skill match, missing skills and semantic similarity.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎯</text></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>AI Job Hunter</h1>
+      <p class="tagline">Compare your CV with a job description. See which skills match, which are missing, and how similar the two texts are.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <form id="analyze-form" class="card" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label for="cv-file">1. Your CV (PDF, max 5 MB)</label>
+          <label class="dropzone" id="dropzone" for="cv-file">
+            <input type="file" id="cv-file" name="cv_file" accept="application/pdf,.pdf" required>
+            <span class="dropzone-icon" aria-hidden="true">📄</span>
+            <span id="file-label">Click to choose a PDF or drop it here</span>
+          </label>
+        </div>
+        <div class="field">
+          <label for="job-description">2. Job description</label>
+          <textarea id="job-description" name="job_description" rows="10"
+            placeholder="Paste the full job posting here..." required></textarea>
+          <small class="hint"><span id="char-count">0</span> characters</small>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="submit" id="analyze-btn" class="btn-primary">Analyze</button>
+        <p id="form-error" class="error" role="alert" hidden></p>
+      </div>
+    </form>
+
+    <section id="loading" class="card loading" hidden aria-live="polite">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Analyzing... The first run can take a little longer while the embedding model loads.</p>
+    </section>
+
+    <section id="results" hidden aria-live="polite">
+      <div class="metrics">
+        <article class="card metric">
+          <h2>Skill match</h2>
+          <div class="gauge" id="skill-gauge"><span id="skill-percent">–</span></div>
+          <p class="metric-note" id="skill-explanation"></p>
+        </article>
+        <article class="card metric">
+          <h2>Semantic similarity</h2>
+          <div class="gauge gauge-alt" id="semantic-gauge"><span id="semantic-percent">–</span></div>
+          <p class="metric-note" id="semantic-note"></p>
+        </article>
+      </div>
+
+      <div class="skills-grid">
+        <article class="card">
+          <h3>Matched skills</h3>
+          <ul class="chips chips-good" id="matched-skills"></ul>
+        </article>
+        <article class="card">
+          <h3>Missing skills</h3>
+          <ul class="chips chips-bad" id="missing-skills"></ul>
+        </article>
+        <article class="card">
+          <h3>Other skills in your CV</h3>
+          <ul class="chips" id="additional-skills"></ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

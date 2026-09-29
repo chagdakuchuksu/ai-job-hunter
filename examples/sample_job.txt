@@ -1,0 +1,17 @@
+Backend Software Engineering Intern (AI Platform)
+
+About the role
+Join our platform team to build internal APIs that power our machine learning products.
+
+Requirements
+- Strong programming skills in Python
+- Experience building REST APIs (FastAPI or Flask)
+- Good understanding of data structures and algorithms
+- Familiarity with SQL databases, ideally PostgreSQL
+- Comfortable with Git and code reviews on GitHub
+- Writing unit tests with pytest
+
+Nice to have
+- Docker and basic CI/CD pipelines
+- Exposure to machine learning, NLP or LLM APIs
+- Linux command line experience
