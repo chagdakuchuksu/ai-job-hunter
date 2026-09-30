@@ -31,6 +31,7 @@ COPY --chown=user . .
 ENV SEMANTIC_ENABLED=true \
     PRELOAD_EMBEDDING_MODEL=true
 
-# Spaces route traffic to port 7860 (matches `app_port` in README.md).
-EXPOSE 7860
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Listen on the port the platform provides in $PORT (Cloud Run sets 8080),
+# falling back to 8080. `exec` lets uvicorn receive shutdown signals directly.
+EXPOSE 8080
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
