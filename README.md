@@ -4,7 +4,7 @@ emoji: 🎯
 colorFrom: blue
 colorTo: indigo
 sdk: docker
-app_port: 7860
+app_port: 8080
 pinned: false
 license: mit
 short_description: Compare a CV with a job post (skills + similarity)
@@ -12,7 +12,7 @@ short_description: Compare a CV with a job post (skills + similarity)
 
 # AI Job Hunter
 
-**[▶ Live Demo: ai-job-hunter-trj6.onrender.com](https://ai-job-hunter-trj6.onrender.com/)**
+[![Live Demo](https://img.shields.io/badge/Live-Demo-success)](https://ai-job-hunter-734011782496.europe-west1.run.app/)
 
 Upload your CV (PDF), paste a job description, and get a transparent breakdown of how the two relate:
 
@@ -23,6 +23,18 @@ Upload your CV (PDF), paste a job description, and get a transparent breakdown o
 > It is **not** a hiring prediction and must not be used for automated hiring decisions.
 
 Built with **Python · FastAPI · PyMuPDF · sentence-transformers · vanilla HTML/CSS/JS**.
+
+## Live Demo
+
+**<https://ai-job-hunter-734011782496.europe-west1.run.app/>**
+
+Try it in your browser without installing anything: upload a CV (PDF), paste a job
+description and click **Analyze**. The demo runs the full app, including semantic similarity,
+from the project's `Dockerfile` on Google Cloud Run. Interactive API docs are at
+[`/docs`](https://ai-job-hunter-734011782496.europe-west1.run.app/docs).
+
+Please don't upload a CV with personal details you wouldn't want to send to a public demo.
+The fictional CVs in [`examples/`](examples) work well for trying it out.
 
 ---
 
@@ -151,12 +163,12 @@ There are two ways to use the app.
 
 ### Option 1: Live Demo (no installation)
 
-Open **<https://ai-job-hunter-trj6.onrender.com/>** in your browser, upload a CV (PDF) and
-paste a job description. The same deployment also serves the interactive API docs at
-<https://ai-job-hunter-trj6.onrender.com/docs>.
+Open **<https://ai-job-hunter-734011782496.europe-west1.run.app/>** in your browser, upload a
+CV (PDF) and paste a job description. The same deployment also serves the interactive API docs
+at <https://ai-job-hunter-734011782496.europe-west1.run.app/docs>.
 
-The demo is hosted on Render's free tier, which puts the app to sleep when it isn't used.
-The first request after a quiet period can take up to about a minute while it wakes up.
+The demo runs on Google Cloud Run, which can shut the app down when it isn't used. The first
+request after a quiet period may then take a little longer while it starts again.
 
 ### Option 2: Run locally (for development)
 
@@ -196,9 +208,10 @@ longer (~10–30 s locally) while the embedding model loads; later ones take abo
 The repository is ready to run as a [Docker Space](https://huggingface.co/docs/hub/spaces-sdks-docker)
 on the free **CPU basic** hardware, with semantic similarity enabled:
 
-- The YAML block at the top of this README is the Space configuration (`sdk: docker`, `app_port: 7860`).
+- The YAML block at the top of this README is the Space configuration (`sdk: docker`, `app_port: 8080`).
 - `Dockerfile` installs the CPU-only PyTorch build and the app's dependencies, downloads
-  `all-MiniLM-L6-v2` at build time (so it is part of the image), and starts Uvicorn on port 7860.
+  `all-MiniLM-L6-v2` at build time (so it is part of the image), and starts Uvicorn on the port
+  given in `$PORT`, falling back to 8080. The same image runs the Cloud Run live demo.
 - The image sets `PRELOAD_EMBEDDING_MODEL=true`, so the model is loaded while the Space starts
   and the first analysis is fast.
 - `.dockerignore` keeps local files, secrets, tests and examples out of the image.
@@ -234,7 +247,7 @@ Errors always return JSON: `{"detail": "<user-safe message>"}` with a suitable s
 ### Example usage
 
 Against a local server (for the live demo, replace `http://127.0.0.1:8000` with
-`https://ai-job-hunter-trj6.onrender.com`):
+`https://ai-job-hunter-734011782496.europe-west1.run.app`):
 
 ```bash
 curl -F "cv_file=@examples/sample_cv.pdf" \
