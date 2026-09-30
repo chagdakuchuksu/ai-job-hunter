@@ -1,4 +1,18 @@
+---
+title: AI Job Hunter
+emoji: 🎯
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+short_description: Compare a CV with a job post (skills + similarity)
+---
+
 # AI Job Hunter
+
+**[▶ Live Demo: ai-job-hunter-trj6.onrender.com](https://ai-job-hunter-trj6.onrender.com/)**
 
 Upload your CV (PDF), paste a job description, and get a transparent breakdown of how the two relate:
 
@@ -122,6 +136,7 @@ All optional. See [.env.example](.env.example).
 | Variable | Default | Purpose |
 |---|---|---|
 | `SEMANTIC_ENABLED` | `true` | Set `false` to skip embeddings |
+| `PRELOAD_EMBEDDING_MODEL` | `false` | Load the embedding model at startup instead of on the first analysis (the Docker image sets it to `true`) |
 | `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Any sentence-transformers model name |
 | `MAX_UPLOAD_MB` | `5` | Max CV file size |
 | `MAX_PDF_PAGES` | `20` | Max CV pages |
@@ -132,15 +147,34 @@ All optional. See [.env.example](.env.example).
 
 ## How to run
 
+There are two ways to use the app.
+
+### Option 1: Live Demo (no installation)
+
+Open **<https://ai-job-hunter-trj6.onrender.com/>** in your browser, upload a CV (PDF) and
+paste a job description. The same deployment also serves the interactive API docs at
+<https://ai-job-hunter-trj6.onrender.com/docs>.
+
+The demo is hosted on Render's free tier, which puts the app to sleep when it isn't used.
+The first request after a quiet period can take up to about a minute while it wakes up.
+
+### Option 2: Run locally (for development)
+
+After [installing](#installation) the dependencies, start the development server:
+
 ```bash
 uvicorn app.main:app --reload
 ```
+
+This runs a private copy of the app on your own machine only (not the public demo):
 
 - Web app: <http://127.0.0.1:8000>
 - Interactive API docs: <http://127.0.0.1:8000/docs>
 - Health check: <http://127.0.0.1:8000/health>
 
-Try it with one of the fictional sample CVs and one of the two job descriptions
+### Sample inputs
+
+Try either option with one of the fictional sample CVs and one of the two job descriptions
 (`sample_job.txt`: backend/AI intern; `sample_job_cloud.txt`: cloud & distributed systems engineer):
 
 | CV | Profile | Backend/AI job: skills · semantic | Cloud job: skills · semantic |
@@ -154,7 +188,35 @@ Terraform, gRPC, ...) and contains traps such as "go-to-market", "C-level" and "
 that must not be detected as Go, C or JavaScript.
 
 `examples/sample_cv.pdf` is a minimal plain-text CV. Regenerate or edit the samples with `python examples/make_sample_cvs.py`.
-The first analysis takes longer (~10–30 s) while the embedding model loads; later ones take about a second.
+The scores above were measured on a local run. After the server starts, the first analysis takes
+longer (~10–30 s locally) while the embedding model loads; later ones take about a second.
+
+## Deploying to Hugging Face Spaces
+
+The repository is ready to run as a [Docker Space](https://huggingface.co/docs/hub/spaces-sdks-docker)
+on the free **CPU basic** hardware, with semantic similarity enabled:
+
+- The YAML block at the top of this README is the Space configuration (`sdk: docker`, `app_port: 7860`).
+- `Dockerfile` installs the CPU-only PyTorch build and the app's dependencies, downloads
+  `all-MiniLM-L6-v2` at build time (so it is part of the image), and starts Uvicorn on port 7860.
+- The image sets `PRELOAD_EMBEDDING_MODEL=true`, so the model is loaded while the Space starts
+  and the first analysis is fast.
+- `.dockerignore` keeps local files, secrets, tests and examples out of the image.
+
+To deploy, create a Space with the **Docker** SDK and upload the project with the `hf` CLI
+(`pip install -U huggingface_hub`, then `hf auth login` with a token that has *write* access):
+
+```bash
+hf repos create <your-username>/ai-job-hunter --repo-type space --space-sdk docker --exist-ok
+```
+
+```bash
+hf upload <your-username>/ai-job-hunter . . --repo-type space --exclude ".venv/*" --exclude ".git/*" --exclude ".claude/*" --exclude ".env" --exclude "*__pycache__*" --exclude ".pytest_cache/*"
+```
+
+The Space builds the image automatically and is then available at
+`https://huggingface.co/spaces/<your-username>/ai-job-hunter`. Free Spaces go to sleep after a
+period of inactivity and wake up on the next visit.
 
 ## API endpoints
 
@@ -170,6 +232,9 @@ Errors always return JSON: `{"detail": "<user-safe message>"}` with a suitable s
 (`413` too large, `415` not a PDF, `422` invalid input, `400` unreadable PDF, `500` generic).
 
 ### Example usage
+
+Against a local server (for the live demo, replace `http://127.0.0.1:8000` with
+`https://ai-job-hunter-trj6.onrender.com`):
 
 ```bash
 curl -F "cv_file=@examples/sample_cv.pdf" \

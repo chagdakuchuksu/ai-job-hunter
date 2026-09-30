@@ -35,6 +35,7 @@ class Settings:
     min_job_chars: int
     semantic_enabled: bool
     embedding_model: str
+    preload_embedding_model: bool
     cors_origins: list[str]
 
     @property
@@ -53,5 +54,6 @@ def get_settings() -> Settings:
         min_job_chars=_int_env("MIN_JOB_CHARS", 30),
         semantic_enabled=_bool_env("SEMANTIC_ENABLED", True),
         embedding_model=os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
+        preload_embedding_model=_bool_env("PRELOAD_EMBEDDING_MODEL", False),
         cors_origins=[o.strip() for o in origins.split(",") if o.strip()],
     )

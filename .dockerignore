@@ -1,0 +1,20 @@
+# Keep the Docker build context small and free of local files/secrets.
+.venv/
+venv/
+.git/
+.github/
+.claude/
+.env
+.env.*
+!.env.example
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.cache/
+*.log
+
+# Not needed at runtime
+tests/
+examples/
+requirements-dev.txt
