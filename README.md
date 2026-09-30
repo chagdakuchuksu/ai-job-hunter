@@ -12,8 +12,6 @@ short_description: Compare a CV with a job post (skills + similarity)
 
 # AI Job Hunter
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-success)](https://ai-job-hunter-734011782496.europe-west1.run.app/)
-
 Upload your CV (PDF), paste a job description, and get a transparent breakdown of how the two relate:
 
 - **Skill match:** which skills from the job posting appear in your CV, and which are missing
